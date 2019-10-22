@@ -25,7 +25,7 @@ public class bUnwarpJApply_ implements PlugIn, Measurements {
 	private ImagePlus imp0p;
 	private CompositeImage comp;
 	private LUT lut1;
-
+	
 	@SuppressWarnings("deprecation")
 	public void run(String arg) {
 		 ImagePlus imp = IJ.getImage();
@@ -40,23 +40,12 @@ public class bUnwarpJApply_ implements PlugIn, Measurements {
 	 		IJ.error("You should use the Merge Channels tool");
 	 		return;
 	 	}
-	 	IJ.error("It's essential to have been choosen Channel 2 as Source in bUnwarJ plugin!!!!");
+	 	IJ.error("It's essential to have been choosen Channel 2 as Source in bUnwarpJ plugin!!!!");
 	 	Preferences pref = Preferences.userRoot();
-	 	TransfPath = pref.get("DEFAULT_PATH", "");
-	 	JFileChooser jf= new JFileChooser ();
-		jf.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		jf.setDialogTitle("bUnwarpJApply----> Load the Transformation file (Filename like this: C2-imageTitle_direct_transf.txt");
-	 	jf.setSelectedFile(new File(TransfPath));
-	 	int returnVal = jf.showOpenDialog(null);
-	 	if (returnVal == JFileChooser.APPROVE_OPTION)
-	 	{
-	 	    File f = jf.getSelectedFile();
-	 	    jf.setCurrentDirectory(f);
-	 	    pref.put("DEFAULT_PATH", f.getAbsolutePath());
-	 	}
-		if(returnVal == JFileChooser.CANCEL_OPTION)
-			return;
-	 	IJ.showStatus("bUnwarpJ Apply is running ....Relax!!!!");
+	 	TransfPath = pref.get("BUNWARPJAPPLY_DEFAULT_PATH", "");
+ 		if (!showDialog(imp))
+ 			return;
+ 		pref.put("BUNWARPJAPPLY_DEFAULT_PATH", TransfPath);
 	 	if (imp.getNChannels() > 1) { 
 			imp1 =ChannelSplitter.getChannel(imp, 2);
 			imp1p = new ImagePlus ("C"+"2"+"-"+title,imp1);
@@ -74,6 +63,7 @@ public class bUnwarpJApply_ implements PlugIn, Measurements {
 					new ImageStack( imp1p.getWidth(), imp1p.getHeight() );
 			for( int i=1; i<=imp1p.getImageStackSize(); i++ )
 			{
+			 	IJ.showStatus("bUnwarpJ Apply "+i+"/"+imp1p.getImageStackSize());
 				ImageProcessor ipSource = imp1p.getImageStack().getProcessor( i );
 				BSplineModel source = new BSplineModel( ipSource, false, 1 );
 				ImagePlus movingImageSource = new ImagePlus("", ipSource );			
@@ -116,4 +106,20 @@ public class bUnwarpJApply_ implements PlugIn, Measurements {
 			RGBStackMerge rsm = new RGBStackMerge();
 			rsm.mergeStacks();	
 	}
+	
+	boolean showDialog(ImagePlus imp) {
+		GenericDialogPlus gd = new GenericDialogPlus("bUnwarpJ Apply");
+		if (imp.getNChannels() > 1) {
+			gd.addDirectoryOrFileField("Load the Transformation file (Filename like this: C2-imageTitle_direct_transf.txt\"", TransfPath);
+			}
+		gd.showDialog();
+		if(gd.wasCanceled())
+			return false;
+		if(gd.invalidNumber()) {
+			IJ.error("Error", "Invalid input number");
+				return false;
+		}
+		TransfPath = gd.getNextString();
+		return true;
+		}
 }
