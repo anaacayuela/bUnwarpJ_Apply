@@ -1,8 +1,6 @@
 import java.io.File;
 import java.util.prefs.Preferences;
-
 import javax.swing.JFileChooser;
-
 import bunwarpj.BSplineModel;
 import bunwarpj.MiscTools;
 import fiji.util.gui.GenericDialogPlus;
@@ -27,8 +25,6 @@ public class bUnwarpJApply_ implements PlugIn, Measurements {
 	private ImagePlus imp0p;
 	private CompositeImage comp;
 	private LUT lut1;
-	private Preferences pref;
-	private GenericDialogPlus gd;
 
 	@SuppressWarnings("deprecation")
 	public void run(String arg) {
@@ -120,24 +116,4 @@ public class bUnwarpJApply_ implements PlugIn, Measurements {
 			RGBStackMerge rsm = new RGBStackMerge();
 			rsm.mergeStacks();	
 	}
-//	boolean showDialog(ImagePlus imp) {
-		
-	//if (imp.getNChannels() > 1) {
-	//jf.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-			
-			
-	//gd.addDirectoryOrFileField("Load the Transformation file (Filename like this: 			C2-imageTitle_direct_transf.txt)", TransfPath);
-	//}
-	//jf.showOpenDialog(null);
-	
-	//if(gd.wasCanceled())
-	//return false;
-			//if(gd.invalidNumber()) {
-			//IJ.error("Error", "Invalid input number");
-	//return false;
-	//}
-		
-	//TransfPath = gd.getNextString();
-	//return true;
-	//}
 }
